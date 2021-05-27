@@ -18,7 +18,7 @@ fn main() {
     manager.create_task(3, 1, 400, None);
     manager.create_task(2, 1, 200, None);
     manager.create_task(4, 1, 50, None);
-    manager.create_task(3, 1, 1200, Some(3));
+    manager.create_task( 3, 1, 1200, Some(3));
     manager.create_task(5, 1, 1200, None);
     manager.create_task(2, 1, 2000, None);
     manager.create_task(6, 1, 20, None);
@@ -43,7 +43,6 @@ fn main() {
         let msg_label: gtk::Label = builder.get_object("msg_label").unwrap();
         let time_label: gtk::Label = builder.get_object("time_label").unwrap();
 
-        let draw_area_copy = draw_area.clone();
         let entry_clone = entry.clone();
         let manager_clone = manager.clone();
         exec_button.connect_clicked(move |_| {
@@ -51,19 +50,22 @@ fn main() {
             let cmd = String::from(entry_clone.get_text().to_string().trim());
             println!("exec command {}", cmd.as_str());
             // parse
-            let (mut req_time, mut priority, mut mem_size, mut pre): (i32, u32, u32, Option<u32>) = (0, 0, 0, None);
             let temp: Vec<&str> = cmd.split(char::is_whitespace).collect();
             if temp.len() != 3 && temp.len() != 4 {
                 eprintln!("[Error] invalid command");
                 msg_label.set_text("[Error] invalid command");
                 return;
             }
-            req_time = temp[0].parse().unwrap();
-            priority = temp[1].parse().unwrap();
-            mem_size = temp[2].parse().unwrap();
-            if temp.len() == 4 {
-                pre = Some(temp[3].parse().unwrap());
-            }
+            let (req_time, priority, mem_size, pre): (i32, i32, u32, Option<u32>)
+                = (temp[0].parse().unwrap(),
+                   temp[1].parse().unwrap(),
+                   temp[2].parse().unwrap(),
+                   if temp.len() == 4 {
+                       Some(temp[3].parse().unwrap())
+                   } else {
+                       None
+                   }
+            );
             manager_clone.borrow_mut().create_task(req_time, priority, mem_size, pre);
             // clear text
             entry_clone.set_text("");

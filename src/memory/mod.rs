@@ -3,6 +3,7 @@ pub mod hole;
 use std::collections::HashMap;
 use crate::memory::hole::*;
 
+#[derive(Debug)]
 pub enum MemoryError {
     OutOfMemory,
     PIDInvalid,
@@ -64,7 +65,8 @@ impl MemoryManager {
                 }
             }
             if self.holes[pos].test_adjacency(&hole) {
-                self.holes[pos].merge_into_self(&hole);
+                self.holes[pos].merge_into_self(&hole)
+                    .expect("hole merge failed");
             } else {
                 self.holes.insert(pos, hole);
             }

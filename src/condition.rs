@@ -1,6 +1,5 @@
 use std::rc::Rc;
 use std::cell::RefCell;
-use crate::condition::CondState::{Done, NotDone};
 
 #[derive(Eq, PartialEq, Clone, Copy, Debug)]
 pub enum CondState {
@@ -20,7 +19,7 @@ impl Condition {
         }
     }
     pub fn set_ok(&mut self) {
-        self.cond = Done;
+        self.cond = CondState::Done;
     }
     pub fn is_done(&self) -> bool {
         self.cond == CondState::Done

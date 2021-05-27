@@ -131,7 +131,8 @@ impl Scheduler {
             Blocked => self.blocked_suspend_queue.push(task.clone()),
             Terminated | New | Running => panic!("Error, cannot suspend {:?} task", task.borrow().state()),
         }
-        self.memory_manager.free(task.borrow().pid());
+        self.memory_manager.free(task.borrow().pid())
+            .expect("free memory failed");
         println!("Task Suspended: {}", task.borrow().pid());
     }
     pub fn unsuspend_task(&mut self, task: TaskRef) -> Result<(), TaskRef> {
@@ -161,7 +162,8 @@ impl Scheduler {
     pub fn terminate_task(&mut self, task: TaskRef) {
         println!("==> {} finished. ", task.borrow().pid());
         task.borrow_mut().set_state(Terminated);
-        self.memory_manager.free(task.borrow().pid());
+        self.memory_manager.free(task.borrow().pid())
+            .expect("free memory failed");
         let cond = self.pid_to_trigger.get(&task.borrow().pid()).unwrap().clone();
         cond.borrow_mut().set_ok();
     }
@@ -189,7 +191,7 @@ impl Scheduler {
                     let active_task = self.task_queue.pop_min().unwrap();
                     let suspended_task = self.ready_suspend_queue.pop().unwrap();
                     self.suspend_task(active_task);
-                    self.unsuspend_task(suspended_task);
+                    self.unsuspend_task(suspended_task).expect("unsuspend failed");
                 } else {
                     out_of_mem.push(self.ready_suspend_queue.pop().unwrap());
                 }
@@ -303,6 +305,9 @@ impl Scheduler {
                 if task.borrow_mut().request_time() <= 0 {
                     self.terminate_task(task);
                 } else {
+                    // decrement priority
+                    let pri = task.borrow().priority();
+                    task.borrow_mut().set_priority(pri - 1);
                     self.ready_task(task);
                 }
             }

@@ -15,7 +15,7 @@ impl Manager {
             pid_counter: 1,
         }
     }
-    pub fn create_task(&mut self, req_time: i32, priority: u32, memory_size: u32, pre: Option<u32>) {
+    pub fn create_task(&mut self, req_time: i32, priority: i32, memory_size: u32, pre: Option<u32>) {
         match self.scheduler.add_task(Task::new(self.pid_counter, req_time, priority, memory_size), pre) {
             Err(e) => eprintln!("Error occurred, unable to create new task: {:?}", e),
             _ => (),

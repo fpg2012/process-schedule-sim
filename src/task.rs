@@ -1,7 +1,6 @@
 use std::cmp::{Ordering, Reverse};
 use crate::memory::hole::*;
 use crate::condition::*;
-use std::fmt::Formatter;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum ProcessState {
@@ -17,7 +16,7 @@ pub struct Task {
     pid: u32,
     request_time: i32,
     sch_time: i32,
-    priority: u32,
+    priority: i32,
     state: ProcessState,
     in_queue_time: i32,
     memory_size: u32,
@@ -27,7 +26,7 @@ pub struct Task {
 }
 
 impl Task {
-    pub fn new(pid: u32, request_time: i32, priority: u32, memory_size: u32) -> Self {
+    pub fn new(pid: u32, request_time: i32, priority: i32, memory_size: u32) -> Self {
         Task {
             pid,
             request_time,
@@ -47,7 +46,7 @@ impl Task {
     pub fn request_time(&self) -> i32 {
         self.request_time
     }
-    pub fn priority(&self) -> u32 {
+    pub fn priority(&self) -> i32 {
         self.priority
     }
     pub fn state(&self) -> &ProcessState {
@@ -56,7 +55,7 @@ impl Task {
     pub fn set_request_time(&mut self, request_time: i32) {
         self.request_time = request_time;
     }
-    pub fn set_priority(&mut self, priority: u32) {
+    pub fn set_priority(&mut self, priority: i32) {
         self.priority = priority;
     }
     pub fn set_state(&mut self, state: ProcessState) {
