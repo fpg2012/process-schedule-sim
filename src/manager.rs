@@ -29,7 +29,7 @@ impl Manager {
         self.scheduler.memory_manager().get_mem_usage()
     }
     pub fn get_running_task(&self) -> [Option<u32>; 2] {
-        self.scheduler.executing_task()
+        self.scheduler.get_executing_tasks()
     }
     pub fn time(&self) -> i32 {
         self.scheduler.time()

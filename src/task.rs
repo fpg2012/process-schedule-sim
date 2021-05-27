@@ -1,17 +1,18 @@
 use std::cmp::{Ordering, Reverse};
 use crate::memory::hole::*;
 use crate::condition::*;
+use std::fmt::Formatter;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum ProcessState {
     New,
     Ready,
     Running,
     Terminated,
     Blocked,
-    Suspended,
 }
 
+#[derive(Debug)]
 pub struct Task {
     pid: u32,
     request_time: i32,
@@ -22,6 +23,7 @@ pub struct Task {
     memory_size: u32,
     memory_range: Option<Hole>,
     cond: Option<ConditionRef>,
+    is_suspended: bool
 }
 
 impl Task {
@@ -36,6 +38,7 @@ impl Task {
             memory_size,
             memory_range: None,
             cond: None,
+            is_suspended: false,
         }
     }
     pub fn pid(&self) -> u32 {
@@ -98,11 +101,20 @@ impl Task {
             }
         }
     }
+    pub fn is_suspended(&self) -> bool {
+        self.is_suspended
+    }
+    pub fn suspend(&mut self) {
+        self.is_suspended = true;
+    }
+    pub fn unsuspend(&mut self) {
+        self.is_suspended = false;
+    }
 }
 
 impl PartialEq for Task {
     fn eq(&self, other: &Self) -> bool {
-        (self.priority, self.in_queue_time).eq(&(other.priority, other.in_queue_time))
+        (self.priority, self.in_queue_time, self.state).eq(&(other.priority, other.in_queue_time, other.state))
     }
 }
 

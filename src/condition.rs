@@ -2,12 +2,13 @@ use std::rc::Rc;
 use std::cell::RefCell;
 use crate::condition::CondState::{Done, NotDone};
 
-#[derive(Eq, PartialEq, Clone, Copy)]
+#[derive(Eq, PartialEq, Clone, Copy, Debug)]
 pub enum CondState {
     NotDone,
     Done,
 }
 
+#[derive(Debug)]
 pub struct Condition {
     cond: CondState
 }
