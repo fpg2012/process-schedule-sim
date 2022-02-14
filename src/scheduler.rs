@@ -53,7 +53,7 @@ impl Scheduler {
         if self.valid_pid.contains(&task.pid()) {
             return Err(InvalidPid);
         }
-        // check cond
+        // check condition
         if let Some(pid) = cond {
             if !self.valid_pid.contains(&pid) {
                 return Err(InvalidCondition);
